@@ -4,8 +4,9 @@ En webbapp för att visa användarkonton, en användaröversikt och detaljer om 
 
 ## Aktuell status
 
-Projektets grund är klar. Appen visar rubriken **Users App**.
-Navigering, användarlistor och API-anslutning utvecklas i kommande steg.
+En statisk användarsida visar fyra fiktiva användare i återanvändbara kort.
+Gränssnittet innehåller sidopanel, sidhuvud, rollmärken och ett sökfält som ännu inte är aktiverat.
+Demonstrationsdata är tydligt märkta. Navigering och API-anslutning utvecklas i kommande steg.
 
 ## Teknik
 
@@ -47,4 +48,10 @@ npm run lint
 - `src/App.tsx` – appens huvudkomponent.
 - `src/main.tsx` – startar React och kopplar appen till HTML-sidan.
 - `src/index.css` – importerar Tailwind CSS.
-- `src/assets`, `src/components`, `src/layouts`, `src/pages` – mappar för kommande delar.
+- `src/components/layout` – sidopanel och sidhuvud.
+- `src/components/users` – användarlista, kort, sökfält och rollmärken.
+- `src/layouts/AppLayout.tsx` – gemensam layout med `children`.
+- `src/pages/UsersPage.tsx` – användarsidan.
+- `src/types/user.ts` – användarens TypeScript-typ.
+- `src/data/demoUsers.ts` – tillfälliga demonstrationsdata.
+- `src/assets` – mapp för framtida lokala resurser.
