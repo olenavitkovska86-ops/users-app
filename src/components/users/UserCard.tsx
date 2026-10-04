@@ -1,4 +1,5 @@
 import { Mail, MapPin, UserRound } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { User } from '../../types/user'
 import RoleBadge from './RoleBadge'
 
@@ -33,6 +34,13 @@ export default function UserCard({ user }: UserCardProps) {
       <div className="mt-5 flex flex-wrap gap-2" aria-label="Roller">
         {user.roles.map((role) => <RoleBadge key={role} role={role} />)}
       </div>
+      <Link
+        to={`/users/${user.id}`}
+        aria-label={`Visa detaljer om ${user.profile.name}`}
+        className="mt-5 inline-block rounded-lg font-medium text-violet-700 hover:underline focus:outline-2 focus:outline-offset-2 focus:outline-violet-600"
+      >
+        Visa detaljer
+      </Link>
     </article>
   )
 }

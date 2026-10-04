@@ -1,12 +1,8 @@
-import type { ReactNode } from 'react'
+import { Outlet } from 'react-router-dom'
 import Header from '../components/layout/Header'
 import Sidebar from '../components/layout/Sidebar'
 
-interface AppLayoutProps {
-  children: ReactNode
-}
-
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout() {
   return (
     <div className="min-h-screen bg-violet-50 text-slate-900 md:flex">
       <a
@@ -19,7 +15,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       <div className="min-w-0 flex-1">
         <Header />
         <main id="main-content" tabIndex={-1} className="p-4 focus:outline-none md:p-8">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>
