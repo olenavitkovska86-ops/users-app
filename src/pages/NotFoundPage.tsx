@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function NotFoundPage() {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="rounded-2xl border border-slate-200 bg-surface p-6">
       <h1 className="text-3xl font-semibold">Sidan hittades inte</h1>
       <p className="mt-2 text-slate-600">Adressen leder inte till någon sida i appen.</p>
       <Link

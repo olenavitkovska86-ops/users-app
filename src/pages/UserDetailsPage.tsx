@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import RoleBadge from '../components/users/RoleBadge'
 import LoadingState from '../components/states/LoadingState'
 import ErrorState from '../components/states/ErrorState'
@@ -8,6 +8,11 @@ import { useUsers } from '../hooks/useUsers'
 
 export default function UserDetailsPage() {
   const { userId } = useParams()
+  const location = useLocation()
+  const navigationState: unknown = location.state
+  const usersSearch = typeof navigationState === 'object' && navigationState !== null &&
+    'usersSearch' in navigationState && typeof navigationState.usersSearch === 'string' &&
+    navigationState.usersSearch.startsWith('?') ? navigationState.usersSearch : ''
   const { data: users, isPending, error, isFetching, isPaused, retryAt, retryUsers } = useUsers()
   const errorState = error ? (
     <ErrorState error={error} onRetry={retryUsers} isFetching={isFetching || isPaused} retryAt={retryAt} hasCachedData={users !== undefined} />
@@ -26,14 +31,14 @@ export default function UserDetailsPage() {
     <div className="space-y-6">
       {errorState}
       <Link
-        to="/users"
+        to={`/users${usersSearch}`}
         className="inline-flex items-center gap-2 rounded-lg font-medium text-violet-700 hover:underline focus:outline-2 focus:outline-offset-2 focus:outline-violet-600"
       >
         <ArrowLeft aria-hidden="true" size={18} />
         Tillbaka till användare
       </Link>
       {user ? (
-        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <article className={`rounded-2xl border p-6 shadow-sm ${user.settings.theme === 'dark' ? 'border-[#56545e] bg-[#38373f] text-[#d5d2d8] [&_dt]:text-[#b8b4bf]' : 'border-profile-light-border bg-profile-light text-slate-900'}`}>
           <h1 className="break-words text-3xl font-semibold tracking-tight">{user.profile.name}</h1>
           <dl className="mt-6 space-y-4">
             <div><dt className="font-medium">Användarnamn</dt><dd className="break-words">{user.username}</dd></div>
@@ -45,15 +50,15 @@ export default function UserDetailsPage() {
             <div>
               <dt className="font-medium">Roller</dt>
               <dd className="mt-2 flex flex-wrap gap-2">
-                {user.roles.map((role) => <RoleBadge key={role} role={role} />)}
+                {user.roles.map((role) => <RoleBadge key={role} role={role} theme={user.settings.theme} />)}
               </dd>
             </div>
           </dl>
           <h2 className="mt-8 text-xl font-semibold">Inställningar</h2>
           <dl className="mt-4 space-y-4">
             <div><dt className="font-medium">Valt tema</dt><dd>{user.settings.theme === 'light' ? 'Ljust' : 'Mörkt'}</dd></div>
-            <div><dt className="font-medium">E-postaviseringar</dt><dd>{user.settings.notifications.email ? 'På' : 'Av'}</dd></div>
-            <div><dt className="font-medium">Pushaviseringar</dt><dd>{user.settings.notifications.push ? 'På' : 'Av'}</dd></div>
+            <div><dt className="font-medium">E-postaviseringar</dt><dd>{user.settings.notifications.email ? 'Aktiverade' : 'Avstängda'}</dd></div>
+            <div><dt className="font-medium">Pushaviseringar</dt><dd>{user.settings.notifications.push ? 'Aktiverade' : 'Avstängda'}</dd></div>
           </dl>
         </article>
       ) : (

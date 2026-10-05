@@ -87,8 +87,8 @@ try {
   for (const user of demoUsers) {
     const html = render(`/users/${user.id}`)
     assert.ok(html.includes(`<dd>${user.settings.theme === 'light' ? 'Ljust' : 'Mörkt'}</dd>`))
-    assert.ok(html.includes(`<dt class="font-medium">E-postaviseringar</dt><dd>${user.settings.notifications.email ? 'På' : 'Av'}</dd>`))
-    assert.ok(html.includes(`<dt class="font-medium">Pushaviseringar</dt><dd>${user.settings.notifications.push ? 'På' : 'Av'}</dd>`))
+    assert.ok(html.includes(`<dt class="font-medium">E-postaviseringar</dt><dd>${user.settings.notifications.email ? 'Aktiverade' : 'Avstängda'}</dd>`))
+    assert.ok(html.includes(`<dt class="font-medium">Pushaviseringar</dt><dd>${user.settings.notifications.push ? 'Aktiverade' : 'Avstängda'}</dd>`))
     assert.ok(!html.includes('<input'))
   }
   assert.equal(calls, 0)

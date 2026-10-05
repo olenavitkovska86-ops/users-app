@@ -20,7 +20,7 @@ export default function UserSearch({ value, onChange, onClear }: UserSearchProps
             onChange={(event) => onChange(event.currentTarget.value)}
             placeholder="Namn, användarnamn, e-post eller ort"
             aria-describedby="search-help"
-            className="w-full rounded-xl border border-slate-300 bg-white py-3 pr-4 pl-10 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-violet-600"
+            className="w-full rounded-xl border border-slate-300 bg-surface py-3 pr-4 pl-10 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-violet-600"
           />
         </div>
         {value !== '' && (

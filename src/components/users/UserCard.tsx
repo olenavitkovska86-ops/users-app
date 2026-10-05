@@ -1,5 +1,5 @@
 import { ArrowUpRight, Mail, MapPin } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { User } from '../../types/user'
 import RoleBadge from './RoleBadge'
 
@@ -8,9 +8,10 @@ interface UserCardProps {
 }
 
 export default function UserCard({ user }: UserCardProps) {
+  const location = useLocation()
   const initials = user.profile.name.trim().split(/\s+/).slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase()
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:border-violet-300 hover:shadow-md focus-within:border-violet-300 focus-within:shadow-md motion-reduce:transition-none">
+    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-surface p-6 shadow-sm transition duration-200 hover:border-violet-300 hover:shadow-md focus-within:border-violet-300 focus-within:shadow-md motion-reduce:transition-none">
       <div className="flex items-center gap-4">
         <div aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-violet-100 font-semibold text-violet-700">
           {initials}
@@ -38,6 +39,7 @@ export default function UserCard({ user }: UserCardProps) {
       <div className="mt-auto pt-5">
         <Link
           to={`/users/${user.id}`}
+          state={{ usersSearch: location.search }}
           aria-label={`Visa detaljer om ${user.profile.name}`}
           className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-medium text-violet-700 transition-colors hover:bg-violet-50 focus:bg-violet-50 focus:outline-2 focus:outline-offset-2 focus:outline-violet-600 motion-reduce:transition-none"
         >

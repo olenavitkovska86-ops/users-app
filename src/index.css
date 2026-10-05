@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Warm neutrals and muted lilac shared with the dark profile card. */
+@theme {
+  --color-surface: #f3f0f5;
+  --color-profile-light: #f1eeE8;
+  --color-profile-light-border: #dedad3;
+  --color-slate-50: #e8e5eb;
+  --color-slate-100: #dfdce3;
+  --color-slate-200: #d0ccd5;
+  --color-slate-300: #b8b4bf;
+  --color-slate-500: #716b7a;
+  --color-slate-600: #625c6b;
+  --color-slate-700: #56545e;
+  --color-slate-900: #38373f;
+  --color-violet-50: #e9e3ed;
+  --color-violet-100: #dfd5e5;
+  --color-violet-200: #cbbdd4;
+  --color-violet-300: #b39fc0;
+  --color-violet-600: #796288;
+  --color-violet-700: #6a537a;
+  --color-violet-800: #594564;
+  --color-violet-900: #483951;
+}

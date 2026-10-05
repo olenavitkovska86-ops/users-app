@@ -167,19 +167,49 @@ skydd mot dubbla klick och bibehållna cachade data. Inga fel provoceras fram mo
 Sökningen matchar delar av namn, användarnamn, e-post och ort utan att skilja på stora och små bokstäver.
 Blanksteg i början och slutet ignoreras. Tom söktext visar hela den hämtade listan.
 Sökningen och knappen **Rensa sökning** arbetar enbart med lokala data och skickar inga API-anrop.
-Resultatantalet visas ovanför listan. Söktexten återställs när användarsidan lämnas.
+Resultatantalet visas ovanför listan. Söktexten lagras i URL-parametern `q` och bevaras tillsammans med filtret när en användares detaljer öppnas och användaren återvänder till listan.
 
 Detaljsidan visar namn, användarnamn, e-post, adress, roller, valt tema och inställningar
 för e-post- och pushaviseringar. Inställningarna visas som information och kan inte ändras i appen.
-Appens färger påverkas inte av användarens valda tema, och inga aviseringar skickas.
+Profilkortet visas i ett ljust eller mjukt mörkt utförande enligt användarens valda tema. Resten av appens tema ändras inte. Aviseringar visas som skrivskyddade statusar, **Aktiverade** eller **Avstängda**; inga aviseringar skickas.
 
 ```bash
 node scripts/check-user-search.mjs
+node scripts/check-user-filters.mjs
 ```
 
 Kontrollen verifierar söklogik, callbacks för inmatning och rensning, resultatmeddelanden
 och inställningar på detaljsidorna. Den använder testdata utan API-anrop.
 Denna kontroll simulerar inte användarens inmatning i en riktig webbläsare.
+
+## Interaktiv översikt och URL-filter
+
+Hela statistikraderna i översikten är länkar med tangentbordsfokus. Totalkortet öppnar `/users`.
+Roller använder `/users?role=user` (eller `admin`, `editor`, `support` och andra roller från API:et),
+teman använder `/users?theme=light` eller `dark`, och aktiverade aviseringar använder
+`/users?notification=email` eller `push`. Även aviseringsantalen beräknas lokalt.
+
+Användarsidan läser parametrarna med `useSearchParams`. Alla angivna filter kombineras med
+varandra och med textsökningen (`q`). Endast den redan hämtade användarlistan filtreras;
+filter, sökning och navigation med cachade data startar inga extra API-anrop.
+Sökning uppdaterar aktuell historikpost så att varje bokstav inte blir ett separat bakåtsteg.
+
+Aktiva filter visas på svenska. **Rensa filter** tar bort `role`, `theme` och `notification`,
+men behåller söktexten; **Rensa sökning** tar bort söktexten men behåller filtren.
+Okända teman och aviseringstyper samt tomma filter ignoreras. Ett okänt rollnamn filtreras
+som vilket rollnamn som helst och kan därför ge noll träffar. API:et tillåter nya rollnamn.
+Länken tillbaka från en profil bevarar listans URL via navigeringsstate. En direktöppnad
+profil utan detta state länkar till den ofiltrerade listan.
+
+`check-user-filters.mjs` kontrollerar URL-filter, kombinationer med sökning, tomma/okända
+parametrar, länkar från översikten, filterrensning och återgång från profilsidan utan API-anrop.
+SSR-kontrollerna ersätter inte kontroll av klick, historik och fokus i webbläsaren.
+Den lokala utökningen har även kontrollerats i headless Chrome med mockade API-svar:
+alla åtta statistiklänkar, Enter, sökning med filter, profil/återgång, bakåt/framåt,
+filterrensning med tangentbord och skip-länken. Översikt, filtrerad lista och båda profilteman
+har kontrollerats vid 360, 375, 768, 820, 1024 och 1280 px utan horisontell överrullning.
+Skärmbilder för telefon, surfplatta och dator har granskats. Detta är Chrome-emulering, inte tester på fysiska enheter.
+Navigationen återanvände ett enda mockat API-anrop. Det verifierar inte anslutningen till det riktiga API:et.
 
 ## Samlad verifiering
 
@@ -193,6 +223,7 @@ node scripts/check-routing.mjs
 node scripts/check-users-query.mjs
 node scripts/check-users-errors.mjs
 node scripts/check-user-search.mjs
+node scripts/check-user-filters.mjs
 ```
 
 Dessa kommandon har körts med godkänt resultat. Bygget inkluderar TypeScript-kontroll.
@@ -215,7 +246,7 @@ Webbläsarens anslutning till det riktiga API:et och en fullständig visuell bed
 ## Begränsningar
 
 - Appen är en läsvy; den skapar, ändrar eller tar inte bort konton och har ingen inloggning.
-- Sökningen gäller den hämtade listan och återställs när användarsidan lämnas.
+- Sökning och filter gäller den hämtade listan. Direktöppnade detaljsidor saknar listans navigeringskontext och länkar tillbaka till `/users`.
 - API:et erbjuder hela listan; inga separata detaljanrop används.
 - Cachelagringen finns endast i minnet. Omladdning eller ett annat fönster/en annan enhet kan orsaka nya anrop.
 - API-nyckeln är synlig för klienten. Appen kan inte ensam garantera den gemensamma dygnsgränsen.
