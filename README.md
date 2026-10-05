@@ -9,7 +9,8 @@ Sidorna använder en gemensam användarlista från API:et via TanStack Query.
 Navigeringen visar aktuell sida och fungerar med länkar mellan listan och detaljerna.
 Laddning, tydliga felmeddelanden och tomma listor visas. Cachade data behålls vid fel under en uppdatering.
 Manuella återförsök skyddas mot upprepade klick och begränsas vid HTTP 429.
-Sökfältet är ännu inte aktiverat.
+Användarlistan har lokal sökning med möjlighet att rensa sökningen och ett meddelande utan träffar.
+Detaljsidan visar även valt tema samt inställningar för e-post- och pushaviseringar.
 
 ## Teknik
 
@@ -60,6 +61,7 @@ npm run lint
 - `src/hooks/useUsers.ts` – gemensam query för användarna.
 - `src/lib/queryClient.ts` – en gemensam QueryClient och cacheinställningar.
 - `src/lib/usersError.ts` – användarvänliga felmeddelanden och väntetid för återförsök.
+- `src/lib/filterUsers.ts` – lokal filtrering av användarlistan utifrån söktext.
 - `src/components/states` – laddning, fel och tom användarlista.
 - `src/data/demoUsers.ts` – testdata för mockkontroller; används inte av appens sidor.
 - `src/assets` – mapp för framtida lokala resurser.
@@ -151,7 +153,7 @@ Väntetiden utgår från felets tidpunkt i den gemensamma cachen och börjar int
 Nedräkningen uppdaterar bara gränssnittet; den skickar inga anrop och startar inget automatiskt återförsök.
 
 Vid fel under en uppdatering visas en varning tillsammans med tidigare hämtade data.
-En tom lista visas som **Inga användare**. Sökning och dess resultatmeddelanden tillkommer i nästa steg.
+En tom lista från API:et visas som **Inga användare**. En sökning utan träffar visas som **Inga sökresultat**.
 
 ```bash
 node scripts/check-users-errors.mjs
@@ -159,3 +161,22 @@ node scripts/check-users-errors.mjs
 
 Mockkontrollen verifierar felmeddelanden på de tre sidorna, `Retry-After`, spärrade återförsök,
 skydd mot dubbla klick och bibehållna cachade data. Inga fel provoceras fram mot det riktiga API:et.
+
+## Lokal sökning och användardetaljer
+
+Sökningen matchar delar av namn, användarnamn, e-post och ort utan att skilja på stora och små bokstäver.
+Blanksteg i början och slutet ignoreras. Tom söktext visar hela den hämtade listan.
+Sökningen och knappen **Rensa sökning** arbetar enbart med lokala data och skickar inga API-anrop.
+Resultatantalet visas ovanför listan. Söktexten återställs när användarsidan lämnas.
+
+Detaljsidan visar namn, användarnamn, e-post, adress, roller, valt tema och inställningar
+för e-post- och pushaviseringar. Inställningarna visas som information och kan inte ändras i appen.
+Appens färger påverkas inte av användarens valda tema, och inga aviseringar skickas.
+
+```bash
+node scripts/check-user-search.mjs
+```
+
+Kontrollen verifierar söklogik, callbacks för inmatning och rensning, resultatmeddelanden
+och inställningar på detaljsidorna. Den använder testdata utan API-anrop.
+Faktisk inmatning, klick och tangentbordsfokus behöver även kontrolleras i webbläsaren.
