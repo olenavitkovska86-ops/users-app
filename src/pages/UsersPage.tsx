@@ -24,7 +24,7 @@ export default function UsersPage() {
     <div className="space-y-6">
       {errorState}
       <div>
-        <h1 className="text-3xl font-semibold">Användare</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Användare</h1>
         <p className="mt-2 text-slate-600">
           Visa användarkonton och öppna en användare för mer information.
         </p>

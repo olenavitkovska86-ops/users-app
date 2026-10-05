@@ -220,4 +220,4 @@ Webbläsarens anslutning till det riktiga API:et och en fullständig visuell bed
 - Cachelagringen finns endast i minnet. Omladdning eller ett annat fönster/en annan enhet kan orsaka nya anrop.
 - API-nyckeln är synlig för klienten. Appen kan inte ensam garantera den gemensamma dygnsgränsen.
 - Produktionshosting är inte konfigurerad. Direktlänkar kräver en SPA-fallback till `index.html`.
-- Den slutliga visuella bearbetningen och regressionen återstår.
+- Gränssnittet har responsiv navigering, initialavatarer, fokusmarkeringar och skeleton-laddning. Slutlig regression återstår.

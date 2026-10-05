@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CircleAlert } from 'lucide-react'
 import { getUsersErrorMessage } from '../../lib/usersError'
 
 interface ErrorStateProps {
@@ -24,7 +25,8 @@ export default function ErrorState({ error, onRetry, isFetching, retryAt, hasCac
   }, [retryAt])
 
   return (
-    <section role="alert" className="rounded-2xl border border-red-200 bg-white p-6">
+    <section role="alert" className="rounded-2xl border border-red-200 bg-red-50/50 p-6 shadow-sm">
+      <CircleAlert aria-hidden="true" className="mb-3 text-red-600" size={26} />
       <h2 className="text-xl font-semibold">{hasCachedData ? 'Uppdateringen misslyckades' : 'Kunde inte hämta användarna'}</h2>
       <p className="mt-2 text-slate-600">{getUsersErrorMessage(error)}</p>
       {hasCachedData && <p className="mt-2 text-slate-600">Tidigare hämtade uppgifter visas fortfarande.</p>}
@@ -33,7 +35,7 @@ export default function ErrorState({ error, onRetry, isFetching, retryAt, hasCac
         type="button"
         onClick={onRetry}
         disabled={isFetching || secondsRemaining > 0}
-        className="mt-4 rounded-lg bg-violet-700 px-4 py-2 font-medium text-white hover:bg-violet-800 focus:outline-2 focus:outline-offset-2 focus:outline-violet-600 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-4 rounded-lg bg-violet-700 px-4 py-2 font-medium text-white transition-colors hover:bg-violet-800 focus:bg-violet-800 focus:outline-2 focus:outline-offset-2 focus:outline-violet-600 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
       >
         {isFetching ? 'Hämtar…' : 'Försök igen'}
       </button>

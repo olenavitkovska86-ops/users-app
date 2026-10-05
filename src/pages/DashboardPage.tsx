@@ -22,15 +22,15 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {errorState}
       <div>
-        <h1 className="text-3xl font-semibold">Översikt</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Översikt</h1>
         <p className="mt-2 text-slate-600">Alla siffror beräknas från den hämtade användarlistan.</p>
       </div>
-      <section className="rounded-2xl border border-slate-200 bg-white p-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-semibold">Totalt antal användare</h2>
         <p className="mt-3 text-4xl font-semibold text-violet-700">{users.length}</p>
       </section>
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold">Användare per roll</h2>
           <p className="mt-2 text-sm text-slate-600">En användare kan ha flera roller.</p>
           <dl className="mt-4 space-y-3">
@@ -42,7 +42,7 @@ export default function DashboardPage() {
             ))}
           </dl>
         </section>
-        <section className="rounded-2xl border border-slate-200 bg-white p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold">Valda teman</h2>
           <dl className="mt-4 space-y-3">
             <div className="flex justify-between gap-4"><dt>Ljust</dt><dd>{lightThemeCount}</dd></div>
