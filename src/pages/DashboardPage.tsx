@@ -1,20 +1,31 @@
-import { demoUsers } from '../data/demoUsers'
 import RoleBadge from '../components/users/RoleBadge'
+import LoadingState from '../components/states/LoadingState'
+import ErrorState from '../components/states/ErrorState'
+import EmptyState from '../components/states/EmptyState'
+import { useUsers } from '../hooks/useUsers'
 
 export default function DashboardPage() {
-  const roles = [...new Set(demoUsers.flatMap((user) => user.roles))]
-  const lightThemeCount = demoUsers.filter((user) => user.settings.theme === 'light').length
-  const darkThemeCount = demoUsers.filter((user) => user.settings.theme === 'dark').length
+  const { data: users, isPending, error } = useUsers()
+  const errorState = error ? <ErrorState /> : null
+
+  if (isPending) return <LoadingState />
+  if (!users) return errorState
+  if (users.length === 0) return <>{errorState}<EmptyState /></>
+
+  const roles = [...new Set(users.flatMap((user) => user.roles))]
+  const lightThemeCount = users.filter((user) => user.settings.theme === 'light').length
+  const darkThemeCount = users.filter((user) => user.settings.theme === 'dark').length
 
   return (
     <div className="space-y-6">
+      {errorState}
       <div>
         <h1 className="text-3xl font-semibold">Översikt</h1>
-        <p className="mt-2 text-slate-600">Alla siffror beräknas från demonstrationsdata.</p>
+        <p className="mt-2 text-slate-600">Alla siffror beräknas från den hämtade användarlistan.</p>
       </div>
       <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 className="text-lg font-semibold">Totalt antal användare</h2>
-        <p className="mt-3 text-4xl font-semibold text-violet-700">{demoUsers.length}</p>
+        <p className="mt-3 text-4xl font-semibold text-violet-700">{users.length}</p>
       </section>
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -24,7 +35,7 @@ export default function DashboardPage() {
             {roles.map((role) => (
               <div key={role} className="flex items-center justify-between gap-4">
                 <dt><RoleBadge role={role} /></dt>
-                <dd className="font-semibold">{demoUsers.filter((user) => user.roles.includes(role)).length}</dd>
+                <dd className="font-semibold">{users.filter((user) => user.roles.includes(role)).length}</dd>
               </div>
             ))}
           </dl>
