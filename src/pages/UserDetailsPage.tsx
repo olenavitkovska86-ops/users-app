@@ -8,8 +8,10 @@ import { useUsers } from '../hooks/useUsers'
 
 export default function UserDetailsPage() {
   const { userId } = useParams()
-  const { data: users, isPending, error } = useUsers()
-  const errorState = error ? <ErrorState /> : null
+  const { data: users, isPending, error, isFetching, isPaused, retryAt, retryUsers } = useUsers()
+  const errorState = error ? (
+    <ErrorState error={error} onRetry={retryUsers} isFetching={isFetching || isPaused} retryAt={retryAt} hasCachedData={users !== undefined} />
+  ) : null
 
   if (isPending) return <LoadingState />
   if (!users) return errorState
@@ -49,10 +51,7 @@ export default function UserDetailsPage() {
           </dl>
         </article>
       ) : (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6">
-          <h1 className="text-2xl font-semibold">Användaren hittades inte</h1>
-          <p className="mt-2 text-slate-600">Det finns ingen användare med detta ID i användarlistan.</p>
-        </section>
+        <EmptyState title="Användaren hittades inte" message="Det finns ingen användare med detta ID i användarlistan." />
       )}
     </div>
   )

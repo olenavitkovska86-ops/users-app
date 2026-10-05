@@ -86,7 +86,7 @@ try {
   await assert.rejects(queryClient.fetchQuery({ ...usersQueryOptions, staleTime: 0 }))
   for (const path of paths) {
     const html = render(path)
-    assert.ok(html.includes('Kunde inte hämta användarna'))
+    assert.ok(html.includes('Uppdateringen misslyckades'))
     assert.ok(html.includes(path === '/dashboard' ? 'Totalt antal användare' : demoUsers[0].profile.name))
   }
   console.log('PASS: background error retains useful cached data.')
