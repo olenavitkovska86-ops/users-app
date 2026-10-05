@@ -5,13 +5,14 @@ En webbapp för att visa användarkonton, en användaröversikt och detaljer om 
 ## Aktuell status
 
 Appen har en översikt, en användarlista och en detaljsida för varje användare.
-Sidorna använder fyra fiktiva användare; demonstrationsdata är tydligt märkta.
+Sidorna använder en gemensam användarlista från API:et via TanStack Query.
 Navigeringen visar aktuell sida och fungerar med länkar mellan listan och detaljerna.
-Sökfältet är ännu inte aktiverat. En separat API-klient är klar, men ännu inte ansluten till sidorna.
+Laddning, grundläggande fel och tomma listor visas. Cachade data behålls vid fel under en uppdatering.
+Sökfältet är ännu inte aktiverat. Detaljerad felhantering och kontrollerad återhämtning utvecklas i nästa steg.
 
 ## Teknik
 
-React, TypeScript med `strict`, Vite, Tailwind CSS via Vite-plugin, lucide-react och react-router-dom.
+React, TypeScript med `strict`, Vite, Tailwind CSS via Vite-plugin, lucide-react, react-router-dom och TanStack Query.
 Projektet använder Oxlint för kodkontroll.
 
 ## Installation
@@ -55,7 +56,10 @@ npm run lint
 - `src/pages` – översikt, användarlista, användardetaljer och sidan för okända adresser.
 - `src/types/user.ts` – användarens TypeScript-typ.
 - `src/api/users.ts` – HTTP-anrop, feltyper och kontroll av svarets struktur.
-- `src/data/demoUsers.ts` – tillfälliga demonstrationsdata.
+- `src/hooks/useUsers.ts` – gemensam query för användarna.
+- `src/lib/queryClient.ts` – en gemensam QueryClient och cacheinställningar.
+- `src/components/states` – laddning, fel och tom användarlista.
+- `src/data/demoUsers.ts` – testdata för mockkontroller; används inte av appens sidor.
 - `src/assets` – mapp för framtida lokala resurser.
 
 ## Sidor och adresser
@@ -77,7 +81,7 @@ returnera `index.html` även för appens adresser, så att direktlänkar fungera
 node scripts/check-routing.mjs
 ```
 
-Kontrollen använder demonstrationsdata och serverrendering utan API-anrop.
+Kontrollen använder testdata i query-cachen och serverrendering utan API-anrop.
 Den kontrollerar sidornas innehåll, länkar och aktiv navigering. Klick, omdirigeringen
 från `/`, bakåt/framåt, tangentbordsfokus och responsiv layout behöver även kontrolleras i webbläsaren.
 
@@ -94,9 +98,39 @@ Klienten skiljer på nätverksfel, HTTP-fel, ogiltig JSON och felaktig datastruk
 Ett valfritt `AbortSignal` stöds; avbrutna anrop omvandlas inte till nätverksfel.
 För HTTP-fel sparas status och eventuell `Retry-After` för senare felhantering.
 
-API:et har en gräns på **100 anrop per dag**. Sidorna använder fortfarande demonstrationsdata
-och gör inga API-anrop. Felkontrollerna använder en mockad `fetch`:
+API:et har en gräns på **100 anrop per dag**. Appens första laddning använder API:et.
+Felkontrollerna använder en mockad `fetch`:
 
 ```bash
 node scripts/check-users-api.mjs
 ```
+
+## Data och cache
+
+Alla tre innehållssidor använder `useUsers` med samma `queryKey`: `["users"]`.
+Detaljsidan söker efter användaren i den gemensamma listan och har inget eget API-anrop.
+Statistiken räknas lokalt, och användare med flera roller räknas i varje relevant roll.
+
+| Inställning | Värde | Betydelse |
+| --- | --- | --- |
+| `staleTime` | 1 timme | Hur länge data betraktas som färska |
+| `gcTime` | 24 timmar | Hur länge inaktiva data behålls i minnet |
+| `retry` och `retryOnMount` | `false` | Inga automatiska återförsök, även efter sidbyte |
+| `refetchOnMount` | `false` | Sidbyten orsakar ingen uppdatering av cachade data |
+| `refetchOnWindowFocus` | `false` | Ingen uppdatering när fönstret får fokus |
+| `refetchOnReconnect` | `false` | Ingen automatisk uppdatering vid återanslutning |
+
+Ingen polling används. En pågående query får slutföras även om en sida tillfälligt avmonteras,
+så att navigation och utvecklingslägets StrictMode kan återanvända samma anrop.
+API-klienten stöder fortfarande explicit avbrytning med `AbortSignal`.
+
+Cachen finns bara i minnet och töms vid en fullständig omladdning. Den delas inte mellan
+enheter och garanterar därför inte den totala dygnsgränsen. Att `staleTime` löper ut
+startar ingen timerstyrd uppdatering; befintliga data visas tills de uppdateras eller cachen försvinner.
+
+```bash
+node scripts/check-users-query.mjs
+```
+
+Mockkontrollen verifierar delad cache, avmontering/återmontering, laddning, tomma listor,
+initiala fel och bibehållna data vid uppdateringsfel. Den gör inga riktiga API-anrop.
