@@ -7,8 +7,9 @@ En webbapp för att visa användarkonton, en användaröversikt och detaljer om 
 Appen har en översikt, en användarlista och en detaljsida för varje användare.
 Sidorna använder en gemensam användarlista från API:et via TanStack Query.
 Navigeringen visar aktuell sida och fungerar med länkar mellan listan och detaljerna.
-Laddning, grundläggande fel och tomma listor visas. Cachade data behålls vid fel under en uppdatering.
-Sökfältet är ännu inte aktiverat. Detaljerad felhantering och kontrollerad återhämtning utvecklas i nästa steg.
+Laddning, tydliga felmeddelanden och tomma listor visas. Cachade data behålls vid fel under en uppdatering.
+Manuella återförsök skyddas mot upprepade klick och begränsas vid HTTP 429.
+Sökfältet är ännu inte aktiverat.
 
 ## Teknik
 
@@ -58,6 +59,7 @@ npm run lint
 - `src/api/users.ts` – HTTP-anrop, feltyper och kontroll av svarets struktur.
 - `src/hooks/useUsers.ts` – gemensam query för användarna.
 - `src/lib/queryClient.ts` – en gemensam QueryClient och cacheinställningar.
+- `src/lib/usersError.ts` – användarvänliga felmeddelanden och väntetid för återförsök.
 - `src/components/states` – laddning, fel och tom användarlista.
 - `src/data/demoUsers.ts` – testdata för mockkontroller; används inte av appens sidor.
 - `src/assets` – mapp för framtida lokala resurser.
@@ -134,3 +136,26 @@ node scripts/check-users-query.mjs
 
 Mockkontrollen verifierar delad cache, avmontering/återmontering, laddning, tomma listor,
 initiala fel och bibehållna data vid uppdateringsfel. Den gör inga riktiga API-anrop.
+
+## Fel och återförsök
+
+Appen visar olika svenska meddelanden för nätverksfel, HTTP 401/403/429/5xx,
+ogiltig JSON och felaktig datastruktur. Interna felmeddelanden och stack traces visas inte.
+En okänd sida skiljs från en saknad användare; användaren söks först efter lyckad datahämtning.
+
+Knappen **Försök igen** startar en manuell hämtning. Den är inaktiverad medan en hämtning
+pågår eller väntar på anslutning. Vid HTTP 429 används `Retry-After`, om headern är tillgänglig,
+som antal sekunder eller ett datum. Utan giltig header används 60 sekunders väntetid
+för att undvika snabba upprepade anrop. Detta innebär inte att dygnsgränsen återställs efter en minut.
+Väntetiden utgår från felets tidpunkt i den gemensamma cachen och börjar inte om vid sidbyte.
+Nedräkningen uppdaterar bara gränssnittet; den skickar inga anrop och startar inget automatiskt återförsök.
+
+Vid fel under en uppdatering visas en varning tillsammans med tidigare hämtade data.
+En tom lista visas som **Inga användare**. Sökning och dess resultatmeddelanden tillkommer i nästa steg.
+
+```bash
+node scripts/check-users-errors.mjs
+```
+
+Mockkontrollen verifierar felmeddelanden på de tre sidorna, `Retry-After`, spärrade återförsök,
+skydd mot dubbla klick och bibehållna cachade data. Inga fel provoceras fram mot det riktiga API:et.

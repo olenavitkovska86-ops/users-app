@@ -5,8 +5,10 @@ import EmptyState from '../components/states/EmptyState'
 import { useUsers } from '../hooks/useUsers'
 
 export default function DashboardPage() {
-  const { data: users, isPending, error } = useUsers()
-  const errorState = error ? <ErrorState /> : null
+  const { data: users, isPending, error, isFetching, isPaused, retryAt, retryUsers } = useUsers()
+  const errorState = error ? (
+    <ErrorState error={error} onRetry={retryUsers} isFetching={isFetching || isPaused} retryAt={retryAt} hasCachedData={users !== undefined} />
+  ) : null
 
   if (isPending) return <LoadingState />
   if (!users) return errorState
