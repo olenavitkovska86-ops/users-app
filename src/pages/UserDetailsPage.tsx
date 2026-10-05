@@ -33,8 +33,8 @@ export default function UserDetailsPage() {
         Tillbaka till användare
       </Link>
       {user ? (
-        <article className="rounded-2xl border border-slate-200 bg-white p-6">
-          <h1 className="break-words text-3xl font-semibold">{user.profile.name}</h1>
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h1 className="break-words text-3xl font-semibold tracking-tight">{user.profile.name}</h1>
           <dl className="mt-6 space-y-4">
             <div><dt className="font-medium">Användarnamn</dt><dd className="break-words">{user.username}</dd></div>
             <div><dt className="font-medium">E-post</dt><dd className="break-words">{user.profile.email}</dd></div>

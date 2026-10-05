@@ -21,7 +21,7 @@ export default function RoleBadge({ role }: RoleBadgeProps) {
   }
 
   return (
-    <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-800">
+    <span className="inline-flex max-w-full break-all rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-sm font-medium text-violet-800">
       {label}
     </span>
   )

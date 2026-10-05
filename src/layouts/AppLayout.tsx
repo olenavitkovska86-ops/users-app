@@ -4,7 +4,7 @@ import Sidebar from '../components/layout/Sidebar'
 
 export default function AppLayout() {
   return (
-    <div className="min-h-screen bg-violet-50 text-slate-900 md:flex">
+    <div className="min-h-screen bg-slate-50 text-slate-900 md:flex">
       <a
         href="#main-content"
         className="sr-only rounded-lg bg-white p-3 focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-10 focus:outline-2 focus:outline-violet-600"
@@ -14,7 +14,7 @@ export default function AppLayout() {
       <Sidebar />
       <div className="min-w-0 flex-1">
         <Header />
-        <main id="main-content" tabIndex={-1} className="p-4 focus:outline-none md:p-8">
+        <main id="main-content" tabIndex={-1} className="mx-auto max-w-6xl p-4 focus:outline-none md:p-8 lg:p-10">
           <Outlet />
         </main>
       </div>
