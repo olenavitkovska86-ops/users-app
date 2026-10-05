@@ -1,12 +1,14 @@
 interface EmptyStateProps {
   title?: string
   message?: string
+  headingLevel?: 'h1' | 'h2'
 }
 
-export default function EmptyState({ title = 'Inga användare', message = 'Tjänsten returnerade en tom användarlista.' }: EmptyStateProps) {
+export default function EmptyState({ title = 'Inga användare', message = 'Tjänsten returnerade en tom användarlista.', headingLevel = 'h1' }: EmptyStateProps) {
+  const Heading = headingLevel
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6">
-      <h1 className="text-2xl font-semibold">{title}</h1>
+      <Heading className="text-2xl font-semibold">{title}</Heading>
       <p className="mt-2 text-slate-600">{message}</p>
     </section>
   )

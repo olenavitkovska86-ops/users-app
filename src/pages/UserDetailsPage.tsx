@@ -49,6 +49,12 @@ export default function UserDetailsPage() {
               </dd>
             </div>
           </dl>
+          <h2 className="mt-8 text-xl font-semibold">Inställningar</h2>
+          <dl className="mt-4 space-y-4">
+            <div><dt className="font-medium">Valt tema</dt><dd>{user.settings.theme === 'light' ? 'Ljust' : 'Mörkt'}</dd></div>
+            <div><dt className="font-medium">E-postaviseringar</dt><dd>{user.settings.notifications.email ? 'På' : 'Av'}</dd></div>
+            <div><dt className="font-medium">Pushaviseringar</dt><dd>{user.settings.notifications.push ? 'På' : 'Av'}</dd></div>
+          </dl>
         </article>
       ) : (
         <EmptyState title="Användaren hittades inte" message="Det finns ingen användare med detta ID i användarlistan." />
