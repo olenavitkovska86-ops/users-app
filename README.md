@@ -86,15 +86,15 @@ node scripts/check-routing.mjs
 ```
 
 Kontrollen använder testdata i query-cachen och serverrendering utan API-anrop.
-Den kontrollerar sidornas innehåll, länkar och aktiv navigering. Klick, omdirigeringen
-från `/`, bakåt/framåt, tangentbordsfokus och responsiv layout behöver även kontrolleras i webbläsaren.
+Den kontrollerar sidornas innehåll, länkar och aktiv navigering. Denna kontroll simulerar inte klick eller webbläsarens historik. Se även webbläsarkontrollerna nedan.
 
 ## API-klient
 
 API-klienten använder `GET https://api-userapi.onrender.com/api/users/getUsers`
 och skickar kursens API-nyckel i headern `x-api-key`.
 Nyckeln finns för närvarande som en konstant i klienten och är synlig i frontend-koden.
-Den är inte en skyddad hemlighet. Ingen lokal `.env` behövs i detta steg.
+Den är inte en skyddad hemlighet. Ingen lokal `.env` behövs med denna konfiguration. Om nyckeln senare flyttas till en
+`VITE_*`-variabel är den fortfarande synlig i frontend-bundlen; variabeln skyddar inte nyckeln.
 
 `fetchUsers` kontrollerar HTTP-status, läser JSON och validerar alla obligatoriska fält
 innan svaret används som `User[]`. Tomma listor och nya rollnamn är tillåtna.
@@ -179,4 +179,45 @@ node scripts/check-user-search.mjs
 
 Kontrollen verifierar söklogik, callbacks för inmatning och rensning, resultatmeddelanden
 och inställningar på detaljsidorna. Den använder testdata utan API-anrop.
-Faktisk inmatning, klick och tangentbordsfokus behöver även kontrolleras i webbläsaren.
+Denna kontroll simulerar inte användarens inmatning i en riktig webbläsare.
+
+## Samlad verifiering
+
+Kör kodkontroll, produktionsbygge och samtliga mockkontroller:
+
+```bash
+npm run lint
+npm run build
+node scripts/check-users-api.mjs
+node scripts/check-routing.mjs
+node scripts/check-users-query.mjs
+node scripts/check-users-errors.mjs
+node scripts/check-user-search.mjs
+```
+
+Dessa kommandon har körts med godkänt resultat. Bygget inkluderar TypeScript-kontroll.
+Mockkontrollerna använder Node.js och Vites serverrendering, utan ett separat testframework
+eller riktiga API-anrop.
+
+I headless Chrome har följande kontrollerats med mockade API-svar: omdirigering,
+inmatning i sökfältet, rensning, sökning utan träffar, tangentbordsfokus till rensningsknappen,
+länkar mellan listan och detaljerna, bakåt/framåt, direktlänk och okända adresser/användare.
+Sidhuvudet behölls under navigering och sidorna återanvände ett enda anrop även i utvecklingslägets
+StrictMode. Vid 375 pixlars bredd fanns ingen horisontell överrullning.
+Tomma svar, nätverksfel, HTTP 401/403/429/500, ogiltig JSON och felaktig struktur kontrollerades
+också i webbläsaren. Väntetiden för 429 startade inget automatiskt återförsök och dubbla klick
+startade endast en ny hämtning.
+
+En integration med det riktiga API:et i Node.js hämtade en lista med 10 användare med ett anrop
+som sedan återanvändes från cachen. Detta verifierar inte CORS i webbläsaren.
+Webbläsarens anslutning till det riktiga API:et och en fullständig visuell bedömning återstår.
+
+## Begränsningar
+
+- Appen är en läsvy; den skapar, ändrar eller tar inte bort konton och har ingen inloggning.
+- Sökningen gäller den hämtade listan och återställs när användarsidan lämnas.
+- API:et erbjuder hela listan; inga separata detaljanrop används.
+- Cachelagringen finns endast i minnet. Omladdning eller ett annat fönster/en annan enhet kan orsaka nya anrop.
+- API-nyckeln är synlig för klienten. Appen kan inte ensam garantera den gemensamma dygnsgränsen.
+- Produktionshosting är inte konfigurerad. Direktlänkar kräver en SPA-fallback till `index.html`.
+- Den slutliga visuella bearbetningen och regressionen återstår.
