@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 export default function Sidebar() {
   return (
-    <aside className="border-b border-slate-200 bg-white p-5 md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0 md:border-r md:border-b-0">
+    <aside className="border-b border-slate-200 bg-surface p-5 md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0 md:border-r md:border-b-0">
       <div className="flex items-center gap-3 text-lg font-semibold">
         <UsersRound aria-hidden="true" className="text-violet-600" size={24} />
         <span>Users App</span>

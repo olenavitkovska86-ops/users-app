@@ -7,7 +7,7 @@ export default function AppLayout() {
     <div className="min-h-screen bg-slate-50 text-slate-900 md:flex">
       <a
         href="#main-content"
-        className="sr-only rounded-lg bg-white p-3 focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-10 focus:outline-2 focus:outline-violet-600"
+        className="sr-only rounded-lg bg-surface p-3 focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-10 focus:outline-2 focus:outline-violet-600"
       >
         Hoppa till innehållet
       </a>

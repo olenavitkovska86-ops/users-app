@@ -1,8 +1,9 @@
 interface RoleBadgeProps {
   role: string
+  theme?: 'light' | 'dark'
 }
 
-export default function RoleBadge({ role }: RoleBadgeProps) {
+export default function RoleBadge({ role, theme = 'light' }: RoleBadgeProps) {
   let label = role
 
   switch (role) {
@@ -21,7 +22,7 @@ export default function RoleBadge({ role }: RoleBadgeProps) {
   }
 
   return (
-    <span className="inline-flex max-w-full break-all rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-sm font-medium text-violet-800">
+    <span className={`inline-flex max-w-full break-all rounded-full border px-3 py-1 text-sm font-medium ${theme === 'dark' ? 'border-[#626070] bg-[#464451] text-[#d5ccdf]' : 'border-violet-200 bg-violet-50 text-violet-800'}`}>
       {label}
     </span>
   )

@@ -1,6 +1,6 @@
 export default function LoadingState() {
   return (
-    <section role="status" className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section role="status" className="space-y-5 rounded-2xl border border-slate-200 bg-surface p-6 shadow-sm">
       <p className="font-medium text-slate-600">Hämtar användare…</p>
       <div aria-hidden="true" className="grid animate-pulse gap-4 motion-reduce:animate-none sm:grid-cols-2">
         {[0, 1].map((item) => (
